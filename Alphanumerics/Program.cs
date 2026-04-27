@@ -1,7 +1,6 @@
 ﻿// 1. Data Setup
 string customerName = "Ms. Barros";
 int currentShares = 2975000;
-string promptOpener = "As a customer of our Magic Yield offering we are excited to tell you about a\nnew financial product that would dramatically increase your return.\r\n";
 
 ProductDetail[] productDetails = [
     new("Magic Yield", 0.1275m, 55000000.0m),
@@ -9,7 +8,7 @@ ProductDetail[] productDetails = [
 ];
 
 // 2. Execution (No 'out' parameters needed here)
-string openingMessage = GetCustomerMessage(customerName, promptOpener);
+string openingMessage = GetCustomerMessage(customerName);
 string sharesMessage = GetSharesMessage(currentShares, productDetails[0].Return);
 string offerMessage = GetOfferMessage(productDetails[1]);
 string comparison = GetComparisonTable(productDetails);
@@ -22,8 +21,11 @@ Console.WriteLine(comparison);
 
 // --- METHODS ---
 
-static string GetCustomerMessage(string name, string opener) =>
-    $"Dear {name},\n{opener}";
+static string GetCustomerMessage(string name)
+{
+    string promptOpener = "As a customer of our Magic Yield offering we are excited to tell you about a\nnew financial product that would dramatically increase your return.\r\n";
+    return $"Dear {name},\n{promptOpener}";
+}
 
 static string GetSharesMessage(int shares, decimal rate) =>
     $"Currently you own: {shares:N0} shares at a return of {rate:P}\n";
