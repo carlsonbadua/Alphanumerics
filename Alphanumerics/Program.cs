@@ -1,70 +1,45 @@
-﻿string openingMessage = string.Empty;
-string sharesMessage = string.Empty;
-string offerMessage = string.Empty;
-string comparisonMessage = string.Empty;
-
+﻿// 1. Data Setup
 string customerName = "Ms. Barros";
 int currentShares = 2975000;
 string promptOpener = "As a customer of our Magic Yield offering we are excited to tell you about a\nnew financial product that would dramatically increase your return.\r\n";
 
-string currentProduct = "Magic Yield";
-decimal currentReturn = 0.1275m;
-decimal currentProfit = 55000000.0m;
+ProductDetail[] productDetails = [
+    new("Magic Yield", 0.1275m, 55000000.0m),
+    new("Glorious Future", 0.13125m, 63000000.0m)
+];
 
-string newProduct = "Glorious Future";
-decimal newReturn = 0.13125m;
-decimal newProfit = 63000000.0m;
+// 2. Execution (No 'out' parameters needed here)
+string openingMessage = GetCustomerMessage(customerName, promptOpener);
+string sharesMessage = GetSharesMessage(currentShares, productDetails[0].Return);
+string offerMessage = GetOfferMessage(productDetails[1]);
+string comparison = GetComparisonTable(productDetails);
 
-
-// Your logic here
-// 2. Initializing with the Type name
-ProductDetail[] productDetails = {
-    new ProductDetail(currentProduct, currentReturn, currentProfit),
-    new ProductDetail(newProduct, newReturn, newProfit)
-};
-
-DisplayCustomerMessage(customerName, promptOpener, out openingMessage);
-DisplayCustomerShares(currentShares, currentReturn, out sharesMessage);
-DisplayOffer(newProduct, newReturn, newProfit, out offerMessage);
-CalculateComparison(productDetails, out comparisonMessage);
-
+// 3. Output
 Console.WriteLine(openingMessage);
 Console.WriteLine(sharesMessage);
 Console.WriteLine(offerMessage);
-Console.WriteLine(comparisonMessage);
+Console.WriteLine(comparison);
 
-static string CalculateComparison(ProductDetail[] products, out string comparisonMessage)
-{
-    comparisonMessage = $"Here's a quick comparison:\n\n{ListRates(products)}";
-    return comparisonMessage;
-}
+// --- METHODS ---
 
-static string DisplayCustomerMessage(string customerName, string promptOpener, out string openingMessage)
-{
-    openingMessage = $"Dear {customerName},\n{promptOpener}";
-    return openingMessage;
-}
+static string GetCustomerMessage(string name, string opener) =>
+    $"Dear {name},\n{opener}";
 
-static string DisplayCustomerShares(int currentShares, decimal currentReturn, out string sharesMessage)
-{
-    sharesMessage = $"Currently you own: {currentShares:N} shares at a return of {currentReturn:P}\n\n";
-    return sharesMessage;
-}
+static string GetSharesMessage(int shares, decimal rate) =>
+    $"Currently you own: {shares:N0} shares at a return of {rate:P}\n";
 
-static string DisplayOffer(string newProduct, decimal newReturn, decimal newProfit, out string offerMessage)
-{
-    offerMessage = $"Our new product, {newProduct}, offers a return of {newReturn:P}.\nGiven your currrent volume, your potential would be ${newProfit:N}\n\n";
-    return offerMessage;
-}
+static string GetOfferMessage(ProductDetail product) =>
+    $"Our new product, {product.Product}, offers a return of {product.Return:P}.\n" +
+    $"Given your current volume, your potential would be {product.Profit:C}\n";
 
-static string ListRates(ProductDetail[] productDetails)
+static string GetComparisonTable(ProductDetail[] products)
 {
-    string ratelist = string.Empty;
-    for (int i = 0; i < productDetails.Length; i++)
+    var sb = new System.Text.StringBuilder("Here's a quick comparison:\n\n");
+    foreach (var p in products)
     {
-        ratelist += $"{productDetails[i].Product.PadRight(20)}{productDetails[i].Return:P}\t${productDetails[i].Profit:N2}\n";
+        sb.AppendLine($"{p.Product.PadRight(20)}{p.Return:P}\t{p.Profit:C2}");
     }
-    return ratelist;
+    return sb.ToString();
 }
 
 public record ProductDetail(string Product, decimal Return, decimal Profit);
